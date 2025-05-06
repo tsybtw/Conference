@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Conference Registration System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-5 offset-lg-3 col-md-8 offset-md-2">
+        <h1 class="mb-4 text-center fw-bold">Sign In</h1>
+        
+        <div class="card shadow">
+            <div class="card-header text-center">
+                <i class="bi bi-person-circle fs-1 my-3"></i>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" action="/login">
+                    <div class="mb-4">
+                        <label for="email" class="form-label required">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control {% if errors.email %}is-invalid{% endif %}" id="email" name="username" placeholder="Enter your email" required>
+                        </div>
+                        {% if errors.email %}
+                        <div class="invalid-feedback">{{ errors.email }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label required">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-key"></i></span>
+                            <input type="password" class="form-control {% if errors.password %}is-invalid{% endif %}" id="password" name="password" placeholder="Enter your password" required>
+                        </div>
+                        {% if errors.password %}
+                        <div class="invalid-feedback">{{ errors.password }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if error %}
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary py-2">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <p>Don't have an account? <a href="/register" class="text-decoration-none fw-bold">Register here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

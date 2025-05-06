@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - Conference Registration System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 offset-lg-1">
+        <div class="d-flex align-items-center mb-4">
+            <i class="bi bi-person-circle fs-1 me-3"></i>
+            <h1 class="mb-0 fw-bold">My Profile</h1>
+        </div>
+        
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h5 class="card-title m-0">Personal Information</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" action="/profile">
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="first_name" class="form-label required">First Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control {% if errors.first_name %}is-invalid{% endif %}" id="first_name" name="first_name" value="{{ form_data.first_name if form_data else user.first_name }}" required>
+                            </div>
+                            {% if errors.first_name %}
+                            <div class="invalid-feedback">{{ errors.first_name }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="last_name" class="form-label required">Last Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input type="text" class="form-control {% if errors.last_name %}is-invalid{% endif %}" id="last_name" name="last_name" value="{{ form_data.last_name if form_data else user.last_name }}" required>
+                            </div>
+                            {% if errors.last_name %}
+                            <div class="invalid-feedback">{{ errors.last_name }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="gender" class="form-label required">Gender</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-gender-ambiguous"></i></span>
+                                <select class="form-select {% if errors.gender %}is-invalid{% endif %}" id="gender" name="gender" required>
+                                    <option value="male" {% if (form_data and form_data.gender == 'male') or (not form_data and user.gender == 'male') %}selected{% endif %}>Male</option>
+                                    <option value="female" {% if (form_data and form_data.gender == 'female') or (not form_data and user.gender == 'female') %}selected{% endif %}>Female</option>
+                                    <option value="other" {% if (form_data and form_data.gender == 'other') or (not form_data and user.gender == 'other') %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+                            {% if errors.gender %}
+                            <div class="invalid-feedback">{{ errors.gender }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="nationality" class="form-label required">Nationality</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                                <input type="text" class="form-control {% if errors.nationality %}is-invalid{% endif %}" id="nationality" name="nationality" value="{{ form_data.nationality if form_data else user.nationality }}" required>
+                            </div>
+                            {% if errors.nationality %}
+                            <div class="invalid-feedback">{{ errors.nationality }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="organization" class="form-label required">Organization</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-building"></i></span>
+                                <input type="text" class="form-control {% if errors.organization %}is-invalid{% endif %}" id="organization" name="organization" value="{{ form_data.organization if form_data else user.organization }}" required>
+                            </div>
+                            {% if errors.organization %}
+                            <div class="invalid-feedback">{{ errors.organization }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="position" class="form-label required">Position</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-briefcase"></i></span>
+                                <input type="text" class="form-control {% if errors.position %}is-invalid{% endif %}" id="position" name="position" value="{{ form_data.position if form_data else user.position }}" required>
+                            </div>
+                            {% if errors.position %}
+                            <div class="invalid-feedback">{{ errors.position }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="birth_date" class="form-label required">Date of Birth</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+                            <input type="date" class="form-control {% if errors.birth_date %}is-invalid{% endif %}" id="birth_date" name="birth_date" value="{{ form_data.birth_date if form_data else user.birth_date }}" required>
+                        </div>
+                        {% if errors.birth_date %}
+                        <div class="invalid-feedback">{{ errors.birth_date }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label required">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control {% if errors.email %}is-invalid{% endif %}" id="email" name="email" value="{{ form_data.email if form_data else user.email }}" required>
+                        </div>
+                        {% if errors.email %}
+                        <div class="invalid-feedback">{{ errors.email }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <hr class="my-4">
+                    <h5 class="mb-3">Change Password</h5>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">New Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                <input type="password" class="form-control {% if errors.password %}is-invalid{% endif %}" id="password" name="password">
+                            </div>
+                            <div class="form-text text-muted"><small>Leave blank to keep current password.</small></div>
+                            {% if errors.password %}
+                            <div class="invalid-feedback">{{ errors.password }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="password_confirm" class="form-label">Confirm New Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                                <input type="password" class="form-control {% if errors.password_confirm %}is-invalid{% endif %}" id="password_confirm" name="password_confirm">
+                            </div>
+                            {% if errors.password_confirm %}
+                            <div class="invalid-feedback">{{ errors.password_confirm }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-save me-2"></i>Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
