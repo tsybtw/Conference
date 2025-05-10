@@ -51,7 +51,7 @@ def update_user(db: Session, user_id: int, user_data: UserUpdate) -> Optional[Us
     if not db_user:
         return None
     
-    update_data = user_data.dict(exclude_unset=True)
+    update_data = user_data.model_dump(exclude_unset=True)
     
     if "password" in update_data and update_data["password"]:
         update_data["hashed_password"] = get_password_hash(update_data["password"])

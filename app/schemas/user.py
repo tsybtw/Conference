@@ -1,8 +1,7 @@
 from typing import Optional
 from datetime import date
-from pydantic import BaseModel, EmailStr, validator, constr, Field
+from pydantic import BaseModel, EmailStr, validator, Field
 from app.models.user import GenderEnum
-
 
 class UserBase(BaseModel):
     first_name: str
@@ -20,7 +19,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: constr(min_length=8)
+    password: str = Field(..., min_length=8)
     password_confirm: str
     
     @validator('password_confirm')
@@ -39,7 +38,7 @@ class UserUpdate(BaseModel):
     position: Optional[str] = None
     birth_date: Optional[date] = None
     email: Optional[EmailStr] = None
-    password: Optional[constr(min_length=8)] = None
+    password: Optional[str] = Field(None, min_length=8)
     password_confirm: Optional[str] = None
     
     @validator('password_confirm')
@@ -57,4 +56,4 @@ class UserInDB(UserBase):
 
 
 class UserResponse(UserInDB):
-    pass 
+    pass

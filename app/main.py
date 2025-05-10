@@ -3,7 +3,6 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
-from starlette.responses import HTMLResponse
 
 from app.api.api import api_router
 from app.web import router as web_router

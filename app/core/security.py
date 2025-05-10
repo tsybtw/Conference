@@ -48,7 +48,7 @@ def get_current_user(
         )
         token_data = TokenPayload(**payload)
         
-        if token_data.exp < datetime.utcnow().timestamp():
+        if token_data.exp and token_data.exp < datetime.utcnow().timestamp():
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Token expired",
