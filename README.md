@@ -130,7 +130,10 @@ conference_app/
 │   │   └── api.py
 │   ├── core/              # Core functionality
 │   │   ├── database.py
-│   │   └── security.py
+│   │   ├── logging.py     # Logging configuration
+│   │   ├── rate_limit.py  # Rate limiting functionality
+│   │   ├── security.py    # Authentication and security
+│   │   └── validation.py  # Data validation functions
 │   ├── crud/              # Database operations
 │   │   └── user.py
 │   ├── models/            # SQLAlchemy models
@@ -142,7 +145,7 @@ conference_app/
 │   │   ├── css/
 │   │   │   └── style.css
 │   │   └── js/
-│   │       └── main.js
+│   │       └── main.js    # Client-side functionality including password toggle
 │   ├── templates/         # HTML templates
 │   │   ├── 404.html
 │   │   ├── base.html
