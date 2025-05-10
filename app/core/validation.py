@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Dict, Optional
+import re
 
 from app.models.user import GenderEnum
 from app.core.logging import logger
@@ -12,6 +13,27 @@ def validate_password(password: str, password_confirm: Optional[str] = None) -> 
     
     if len(password) < 8:
         errors["password"] = "Password must be at least 8 characters long"
+    
+    # Check for uppercase letter
+    if not re.search(r'[A-Z]', password):
+        if "password" in errors:
+            errors["password"] += ". Must contain at least one uppercase letter"
+        else:
+            errors["password"] = "Password must contain at least one uppercase letter"
+    
+    # Check for digit
+    if not re.search(r'[0-9]', password):
+        if "password" in errors:
+            errors["password"] += ". Must contain at least one digit"
+        else:
+            errors["password"] = "Password must contain at least one digit"
+    
+    # Check for special character
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        if "password" in errors:
+            errors["password"] += ". Must contain at least one special character"
+        else:
+            errors["password"] = "Password must contain at least one special character"
     
     if password_confirm is not None and password != password_confirm:
         errors["password_confirm"] = "Passwords do not match"

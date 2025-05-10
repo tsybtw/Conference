@@ -11,6 +11,9 @@ A web application built with FastAPI for conference registration and participant
 - Form validation (both client and server-side)
 - List of registered participants (for authenticated users)
 - Profile editing
+- Enhanced password security with complexity requirements
+- Password visibility toggle with eye icon
+- Password reset functionality via email verification
 
 ## 🔧 Requirements
 

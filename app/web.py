@@ -10,11 +10,12 @@ from sqlalchemy.orm import Session
 from pydantic import EmailStr
 
 from app.core.database import get_db
-from app.core.security import get_current_user, create_access_token, set_csrf_token, verify_csrf_token
+from app.core.security import get_current_user, create_access_token, set_csrf_token, verify_csrf_token, get_password_hash
 from app.core.rate_limit import check_login_rate_limit
 from app.core.validation import validate_password, validate_gender, validate_birth_date
 from app.core.logging import logger
-from app.crud.user import create_user, get_users, update_user, authenticate_user
+from app.core.email import send_password_reset_email, verify_reset_code
+from app.crud.user import create_user, get_users, update_user, authenticate_user, get_user_by_email
 from app.models.user import User, GenderEnum
 from app.schemas.user import UserCreate, UserUpdate
 from app.config import settings
@@ -237,7 +238,7 @@ async def login_user(
             {
                 "request": request,
                 "user": None,
-                "errors": {"form": "Invalid email or password"},
+                "errors": {"form": "Invalid email or password. Please check your credentials and try again."},
                 "csrf_token": new_csrf_token
             },
             status_code=status.HTTP_401_UNAUTHORIZED
@@ -396,4 +397,184 @@ async def update_profile(
             "csrf_token": new_csrf_token
         },
         status_code=status.HTTP_400_BAD_REQUEST
+    )
+
+
+@router.get("/forgot-password", response_class=HTMLResponse)
+async def forgot_password_page(
+    request: Request,
+    user: Optional[User] = Depends(get_current_user_from_cookie)
+):
+    if user:
+        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    
+    csrf_token = set_csrf_token(request)
+    return templates.TemplateResponse(
+        "forgot_password.html",
+        {"request": request, "user": None, "errors": {}, "csrf_token": csrf_token}
+    )
+
+
+@router.post("/forgot-password", response_class=HTMLResponse)
+async def forgot_password_submit(
+    request: Request,
+    email: EmailStr = Form(...),
+    csrf_token: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    errors = {}
+    
+    if not verify_csrf_token(request, csrf_token):
+        errors["csrf"] = "Invalid security token. Please try again."
+        logger.warning(f"CSRF validation failed during password reset attempt for email: {email}")
+    
+    if not errors:
+        # Check if user exists
+        user = get_user_by_email(db, email)
+        if not user:
+            errors["email"] = "No account found with this email address"
+        else:
+            # Send password reset email
+            if send_password_reset_email(email):
+                logger.info(f"Password reset email sent to: {email}")
+                # Redirect to verification page
+                response = RedirectResponse(url=f"/verify-reset-code?email={email}", status_code=status.HTTP_303_SEE_OTHER)
+                return response
+            else:
+                errors["email"] = "Failed to send reset email. Please check your email configuration or try again later."
+                logger.error(f"Failed to send password reset email to: {email}")
+    
+    new_csrf_token = set_csrf_token(request)
+    return templates.TemplateResponse(
+        "forgot_password.html",
+        {
+            "request": request,
+            "user": None,
+            "errors": errors,
+            "csrf_token": new_csrf_token
+        },
+        status_code=status.HTTP_400_BAD_REQUEST if errors else status.HTTP_200_OK
+    )
+
+
+@router.get("/verify-reset-code", response_class=HTMLResponse)
+async def verify_code_page(
+    request: Request,
+    email: str,
+    user: Optional[User] = Depends(get_current_user_from_cookie)
+):
+    if user:
+        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    
+    csrf_token = set_csrf_token(request)
+    return templates.TemplateResponse(
+        "verify_reset_code.html",
+        {"request": request, "user": None, "email": email, "errors": {}, "csrf_token": csrf_token}
+    )
+
+
+@router.post("/verify-reset-code", response_class=HTMLResponse)
+async def verify_code_submit(
+    request: Request,
+    email: str = Form(...),
+    code: str = Form(...),
+    csrf_token: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    errors = {}
+    
+    if not verify_csrf_token(request, csrf_token):
+        errors["csrf"] = "Invalid security token. Please try again."
+        logger.warning(f"CSRF validation failed during code verification for email: {email}")
+    
+    if not errors:
+        # Verify the reset code
+        if verify_reset_code(email, code):
+            logger.info(f"Password reset code verified for: {email}")
+            # Redirect to reset password page
+            response = RedirectResponse(url=f"/reset-password?email={email}", status_code=status.HTTP_303_SEE_OTHER)
+            return response
+        else:
+            errors["code"] = "Invalid or expired verification code. Please request a new code or check your email again."
+            logger.warning(f"Invalid password reset code attempt for: {email}")
+    
+    new_csrf_token = set_csrf_token(request)
+    return templates.TemplateResponse(
+        "verify_reset_code.html",
+        {
+            "request": request,
+            "user": None,
+            "email": email,
+            "errors": errors,
+            "csrf_token": new_csrf_token
+        },
+        status_code=status.HTTP_400_BAD_REQUEST if errors else status.HTTP_200_OK
+    )
+
+
+@router.get("/reset-password", response_class=HTMLResponse)
+async def reset_password_page(
+    request: Request,
+    email: str,
+    user: Optional[User] = Depends(get_current_user_from_cookie)
+):
+    if user:
+        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    
+    csrf_token = set_csrf_token(request)
+    return templates.TemplateResponse(
+        "reset_password.html",
+        {"request": request, "user": None, "email": email, "errors": {}, "csrf_token": csrf_token}
+    )
+
+
+@router.post("/reset-password", response_class=HTMLResponse)
+async def reset_password_submit(
+    request: Request,
+    email: str = Form(...),
+    password: str = Form(...),
+    password_confirm: str = Form(...),
+    csrf_token: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    errors = {}
+    
+    if not verify_csrf_token(request, csrf_token):
+        errors["csrf"] = "Invalid security token. Please try again."
+        logger.warning(f"CSRF validation failed during password reset for email: {email}")
+    
+    password_errors = validate_password(password, password_confirm)
+    errors.update(password_errors)
+    
+    if not errors:
+        # Update user's password
+        user = get_user_by_email(db, email)
+        if not user:
+            errors["email"] = "User not found"
+        else:
+            # Update password
+            user.hashed_password = get_password_hash(password)
+            db.commit()
+            logger.info(f"Password reset successful for user: {email}")
+            
+            # Create flash message
+            flash = FlashMessage(request)
+            flash.add("Your password has been reset successfully. Please login with your new password.", "success")
+            request.session["messages"] = flash.get()
+            
+            # Redirect to login page
+            response = RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
+            return response
+    
+    new_csrf_token = set_csrf_token(request)
+    return templates.TemplateResponse(
+        "reset_password.html",
+        {
+            "request": request,
+            "user": None,
+            "email": email,
+            "errors": errors,
+            "csrf_token": new_csrf_token
+        },
+        status_code=status.HTTP_400_BAD_REQUEST if errors else status.HTTP_200_OK
     ) 

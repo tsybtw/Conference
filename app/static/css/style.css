@@ -193,11 +193,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .card .bi {
   transition: all 0.3s ease;
+  color: inherit;
 }
 
 .card:hover .bi {
   transform: scale(1.1);
-  color: var(--secondary);
+  color: inherit;
 }
 
 .btn {

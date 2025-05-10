@@ -15,6 +15,17 @@
                 <h5 class="card-title m-0">Participant Information</h5>
             </div>
             <div class="card-body p-4">
+                {% if errors.form %}
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="me-4">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errors.form }}
+                        </div>
+                        <button type="button" class="btn-close ms-4" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+                {% endif %}
+                
                 <form method="post" action="/register">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                     
@@ -102,7 +113,7 @@
                             <input type="date" class="form-control {% if errors.birth_date %}is-invalid{% endif %}" id="birth_date" name="birth_date" value="{{ form_data.birth_date if form_data else '' }}" required>
                         </div>
                         {% if errors.birth_date %}
-                        <div class="invalid-feedback">{{ errors.birth_date }}</div>
+                        <div class="invalid-feedback d-block">{{ errors.birth_date }}</div>
                         {% endif %}
                     </div>
                     
@@ -132,7 +143,7 @@
                             </div>
                             <div class="form-text text-muted"><small>Password must be at least 8 characters long</small></div>
                             {% if errors.password %}
-                            <div class="invalid-feedback">{{ errors.password }}</div>
+                            <div class="invalid-feedback d-block">{{ errors.password }}</div>
                             {% endif %}
                         </div>
                         
@@ -146,7 +157,7 @@
                                 </button>
                             </div>
                             {% if errors.password_confirm %}
-                            <div class="invalid-feedback">{{ errors.password_confirm }}</div>
+                            <div class="invalid-feedback d-block">{{ errors.password_confirm }}</div>
                             {% endif %}
                         </div>
                     </div>

@@ -20,6 +20,17 @@ class Settings(BaseSettings):
     
     USE_HTTPS: bool = os.environ.get("USE_HTTPS", "false").lower() == "true"
     
+    # Email settings
+    EMAIL_HOST: str = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
+    EMAIL_PORT: int = int(os.environ.get("EMAIL_PORT", "587"))
+    EMAIL_USERNAME: str = os.environ.get("EMAIL_USERNAME", "")
+    EMAIL_PASSWORD: str = os.environ.get("EMAIL_PASSWORD", "")
+    EMAIL_FROM: str = os.environ.get("EMAIL_FROM", "noreply@conference.com")
+    EMAIL_USE_TLS: bool = os.environ.get("EMAIL_USE_TLS", "true").lower() == "true"
+    
+    # Password reset settings
+    RESET_TOKEN_EXPIRE_MINUTES: int = 15
+    
     class Config:
         env_file = ".env"
         case_sensitive = True

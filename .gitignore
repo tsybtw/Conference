@@ -10,8 +10,7 @@ build/
 
 # Virtual environments
 venv/
-env/
-ENV/
+.env
 
 # IDE specific files
 .idea/

@@ -98,10 +98,10 @@
                         <label for="birth_date" class="form-label required">Date of Birth</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
-                            <input type="date" class="form-control {% if errors.birth_date %}is-invalid{% endif %}" id="birth_date" name="birth_date" value="{{ form_data.birth_date if form_data else user.birth_date }}" required>
+                            <input type="date" class="form-control {% if errors.birth_date %}is-invalid{% endif %}" id="birth_date" name="birth_date" value="{{ form_data.birth_date if form_data else user.birth_date.strftime('%Y-%m-%d') }}" required>
                         </div>
                         {% if errors.birth_date %}
-                        <div class="invalid-feedback">{{ errors.birth_date }}</div>
+                        <div class="invalid-feedback d-block">{{ errors.birth_date }}</div>
                         {% endif %}
                     </div>
                     
@@ -131,7 +131,7 @@
                             </div>
                             <div class="form-text text-muted"><small>Leave blank to keep current password.</small></div>
                             {% if errors.password %}
-                            <div class="invalid-feedback">{{ errors.password }}</div>
+                            <div class="invalid-feedback d-block">{{ errors.password }}</div>
                             {% endif %}
                         </div>
                         
@@ -145,7 +145,7 @@
                                 </button>
                             </div>
                             {% if errors.password_confirm %}
-                            <div class="invalid-feedback">{{ errors.password_confirm }}</div>
+                            <div class="invalid-feedback d-block">{{ errors.password_confirm }}</div>
                             {% endif %}
                         </div>
                     </div>
@@ -160,4 +160,15 @@
         </div>
     </div>
 </div>
+
+{% if errors.form %}
+<div class="alert alert-danger alert-dismissible fade show mb-4">
+    <div class="d-flex justify-content-between align-items-start">
+        <div class="me-4">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ errors.form }}
+        </div>
+        <button type="button" class="btn-close ms-4" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+{% endif %}
 {% endblock %} 
