@@ -16,6 +16,8 @@
             </div>
             <div class="card-body p-4">
                 <form method="post" action="/register">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    
                     <div class="row g-3">
                         <div class="col-md-6 mb-3">
                             <label for="first_name" class="form-label required">First Name</label>
@@ -124,6 +126,9 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-key"></i></span>
                                 <input type="password" class="form-control {% if errors.password %}is-invalid{% endif %}" id="password" name="password" placeholder="Create a password" required>
+                                <button type="button" class="btn btn-outline-secondary password-toggle" aria-label="Toggle password visibility">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
                             </div>
                             <div class="form-text text-muted"><small>Password must be at least 8 characters long</small></div>
                             {% if errors.password %}
@@ -136,6 +141,9 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
                                 <input type="password" class="form-control {% if errors.password_confirm %}is-invalid{% endif %}" id="password_confirm" name="password_confirm" placeholder="Confirm your password" required>
+                                <button type="button" class="btn btn-outline-secondary password-toggle" aria-label="Toggle password visibility">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
                             </div>
                             {% if errors.password_confirm %}
                             <div class="invalid-feedback">{{ errors.password_confirm }}</div>
