@@ -28,9 +28,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/"><i class="bi bi-house-door me-1"></i>Home</a>
-                    </li>
                     {% if user %}
                     <li class="nav-item">
                         <a class="nav-link" href="/users"><i class="bi bi-people me-1"></i>Participants</a>
@@ -50,7 +47,7 @@
                         <a class="nav-link" href="/login"><i class="bi bi-box-arrow-in-right me-1"></i>Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-outline-light btn-sm ms-2" href="/register"><i class="bi bi-person-plus me-1"></i>Register</a>
+                        <a class="nav-link" href="/register"><i class="bi bi-person-plus me-1"></i>Register</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -74,8 +71,7 @@
     <footer class="footer py-2 mt-auto">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-4 text-lg-start text-center mb-2 mb-lg-0">
-                    <h5 class="mb-1">Conference Registration System</h5>
+                <div class="col-lg-4 text-lg-start text-center">
                 </div>
                 <div class="col-lg-4 text-center mb-2 mb-lg-0">
                     <div class="social-icons">

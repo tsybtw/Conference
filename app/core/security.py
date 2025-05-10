@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 from typing import Any, Optional, Union
+import secrets
 
 from jose import jwt
 from passlib.context import CryptContext
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
@@ -70,3 +71,24 @@ def get_current_user(
         )
     
     return user
+
+
+def generate_csrf_token() -> str:
+    return secrets.token_hex(32)
+
+
+def set_csrf_token(request: Request) -> str:
+    token = generate_csrf_token()
+    request.session["csrf_token"] = token
+    return token
+
+
+def verify_csrf_token(request: Request, form_csrf_token: str) -> bool:
+    if not form_csrf_token:
+        return False
+    
+    session_csrf_token = request.session.get("csrf_token")
+    if not session_csrf_token:
+        return False
+    
+    return secrets.compare_digest(form_csrf_token, session_csrf_token)
